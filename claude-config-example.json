@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "Confluence communication server": {
+      "command": "node",
+      "args": ["/confluence-mcp-server/build/index.js"],
+      "env": {
+        "CONFLUENCE_URL": "https://xxx.com",
+        "CONFLUENCE_PERSONAL_TOKEN": "xxxx"
+      }
+    }
+  }
+}
+
+// 注意：
+// 1. API 端点使用 /rest/api/... (不是 /wiki/rest/api/...)
+// 2. 认证方式使用 Bearer Token
+// 3. 已验证可以访问页面 276154047 (模块接口整理文档)

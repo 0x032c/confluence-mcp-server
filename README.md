@@ -86,6 +86,21 @@ CONFLUENCE_API_KEY=your_api_key_here
   }
 }
 ```
+### 在 Cursor 中配置
+```json
+{
+  "mcpServers": {
+    "confluence": {
+      "command": "node",
+      "args": ["/data/confluence-mcp-server/build/index.js"],
+      "env": {
+        "CONFLUENCE_URL": "http://wiki.xx.com",
+        "CONFLUENCE_COOKIE": "xxx"
+      }
+    }
+  }
+}
+```
 
 ## 可用工具
 

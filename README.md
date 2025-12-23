@@ -65,6 +65,11 @@ CONFLUENCE_API_KEY=your_api_key_here
 3. 点击 **创建 API 令牌**
 4. 使用邮箱 + API Key 进行认证
 
+#### Cookie (新方式)
+1. 登录 Confluence
+2. 通过浏览器的开发者工具（F12 -> Network -> 找到一个 wiki 页面请求 -> Request Headers）
+3. 复制完整的 Cookie 字符串
+
 ### 在 Claude Desktop 中配置
 
 编辑 Claude Desktop 配置文件：

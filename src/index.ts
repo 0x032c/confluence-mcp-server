@@ -15,6 +15,7 @@ const CONFLUENCE_URL = process.env.CONFLUENCE_URL;
 const CONFLUENCE_API_MAIL = process.env.CONFLUENCE_API_MAIL;
 const CONFLUENCE_API_KEY = process.env.CONFLUENCE_API_KEY;
 const CONFLUENCE_PERSONAL_TOKEN = process.env.CONFLUENCE_PERSONAL_TOKEN;
+const CONFLUENCE_COOKIE = process.env.CONFLUENCE_COOKIE;
 
 /**
  * Create an MCP server to handle CQL queries and page retrieval.
@@ -333,27 +334,30 @@ async function updatePageContent(
  * @returns {AxiosRequestConfig}
  */
 function getAuthHeaders(): AxiosRequestConfig<any> {
-  let authHeader: string;
+  const headers: any = {
+    'Content-Type': 'application/json',
+  };
   
-  // 优先使用 Personal Token (Bearer Token)
-  if (CONFLUENCE_PERSONAL_TOKEN) {
-    authHeader = `Bearer ${CONFLUENCE_PERSONAL_TOKEN}`;
+  // 1. 优先使用 Cookie 认证 (常用于没有 API Token 的情况)
+  if (CONFLUENCE_COOKIE) {
+    headers['Cookie'] = CONFLUENCE_COOKIE;
+    // 使用 Cookie 时通常需要此 Header 来绕过 CSRF 检查
+    headers['X-Atlassian-Token'] = 'no-check';
   } 
-  // 否则使用 Basic Auth (邮箱 + API Key)
+  // 2. 其次使用 Personal Token (Bearer Token)
+  else if (CONFLUENCE_PERSONAL_TOKEN) {
+    headers['Authorization'] = `Bearer ${CONFLUENCE_PERSONAL_TOKEN}`;
+  } 
+  // 3. 最后使用 Basic Auth (邮箱 + API Key)
   else if (CONFLUENCE_API_MAIL && CONFLUENCE_API_KEY) {
-    authHeader = `Basic ${Buffer.from(
+    headers['Authorization'] = `Basic ${Buffer.from(
       `${CONFLUENCE_API_MAIL}:${CONFLUENCE_API_KEY}`,
     ).toString('base64')}`;
   } else {
-    throw new Error('未配置认证信息：需要 CONFLUENCE_PERSONAL_TOKEN 或 (CONFLUENCE_API_MAIL + CONFLUENCE_API_KEY)');
+    throw new Error('未配置认证信息：需要 CONFLUENCE_COOKIE 或 CONFLUENCE_PERSONAL_TOKEN 或 (CONFLUENCE_API_MAIL + CONFLUENCE_API_KEY)');
   }
   
-  return {
-    headers: {
-      Authorization: authHeader,
-      'Content-Type': 'application/json',
-    },
-  };
+  return { headers };
 }
 
 /**
